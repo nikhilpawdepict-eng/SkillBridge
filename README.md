@@ -1,5 +1,9 @@
 # SkillBridge
 
+Repository: https://github.com/nikhilpawdepict-eng/SkillBridge
+
+This document explains how to clone, configure, run, test, and validate SkillBridge on a new computer.
+
 ## Gemini AI Setup
 
 The AI Assistant uses Gemini through the Express backend. The Gemini API key is never exposed to the React frontend.
@@ -32,26 +36,77 @@ SkillBridge is an all-in-one engineering college ecosystem connecting freshers, 
 
 ---
 
-## Quick Start Guide
+## Complete Local Setup
 
 ### 1. Prerequisites
 
-- **Node.js**: v18 or higher (v20+ recommended)
-- **MongoDB Server & MongoDB Compass**: Running locally on `mongodb://127.0.0.1:27017`
+- **Node.js**: v18 or higher; v20+ recommended
+- **npm**: included with Node.js
+- **MongoDB Community Server**: running at `mongodb://127.0.0.1:27017`
+- **Google Gemini API key**: required for the AI Assistant
+- **MongoDB Compass**: optional, for viewing database records
 
-### 2. Open the Project
+Check your installed tools:
 
-```powershell
-cd C:\Users\pawde\Desktop\SkillBridge
+```bash
+node --version
+npm --version
 ```
+
+### 2. Clone the Repository
+
+```bash
+git clone https://github.com/nikhilpawdepict-eng/SkillBridge.git
+cd SkillBridge
+```
+
+If you downloaded a ZIP file, extract it and open a terminal inside the extracted `SkillBridge` folder.
 
 ### 3. Install Dependencies
 
-```bash
+```powershell
 npm install
 ```
 
-### 4. Verify Gemini Configuration
+### 4. Create `.env`
+
+The real `.env` is not stored in GitHub because it contains secrets. Create it from the safe template.
+
+Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+macOS/Linux:
+
+```bash
+cp .env.example .env
+```
+
+Set the values in `.env`:
+
+```env
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/skillbridge
+AUTH_SECRET=replace-with-a-long-random-secret
+GEMINI_API_KEY=replace-with-your-google-gemini-api-key
+GEMINI_MODEL=gemini-3.6-flash
+```
+
+Create a Gemini key at [Google AI Studio](https://aistudio.google.com/app/apikey). Never commit `.env`, publish it, or put the key in a `VITE_` variable.
+
+### 5. Start MongoDB
+
+Start MongoDB Community Server and confirm it is available at:
+
+```text
+mongodb://127.0.0.1:27017
+```
+
+MongoDB Compass is optional. SkillBridge creates or seeds the `skillbridge` database when the backend starts.
+
+### 6. Verify Gemini Configuration
 
 Run this before starting the application:
 
@@ -65,7 +120,7 @@ Expected output:
 Gemini smoke test passed.
 ```
 
-### 5. Start the Backend API Server
+### 7. Start the Backend API Server
 
 In terminal 1:
 
@@ -84,7 +139,7 @@ npm run server
 
 The backend runs at `http://localhost:5000`.
 
-### 6. Start the Frontend Development Server
+### 8. Start the Frontend Development Server
 
 In terminal 2:
 
@@ -96,7 +151,7 @@ npm run dev
 
 The frontend runs at `http://localhost:5173` and proxies `/api` requests to the backend on port `5000`.
 
-### 7. Test the Application
+### 9. Test the Application
 
 Open the AI Chatbot page and try:
 
@@ -113,7 +168,7 @@ You can also check the backend health endpoint:
 http://localhost:5000/api/health
 ```
 
-### 8. Validate the Project
+### 10. Validate the Project
 
 ```bash
 npm run build
@@ -121,6 +176,24 @@ npm run lint
 ```
 
 Keep the backend and frontend terminals running while using the application.
+
+### Daily Run Order
+
+After the initial setup, use two terminals from the project directory.
+
+Terminal 1:
+
+```bash
+npm run server
+```
+
+Terminal 2:
+
+```bash
+npm run dev
+```
+
+Open `http://localhost:5173` in your browser.
 
 ---
 
@@ -134,7 +207,7 @@ Run:
 npm run test:gemini
 ```
 
-If it fails, verify that `.env` contains a real `GEMINI_API_KEY` and restart the backend after changing `.env`.
+If it fails, verify that `.env` is beside `package.json`, contains a real `GEMINI_API_KEY`, uses `GEMINI_MODEL=gemini-3.6-flash`, and that the backend was restarted after changing `.env`.
 
 ### MongoDB connection error
 
@@ -152,6 +225,29 @@ The default ports are:
 - Frontend: `5173`
 
 Stop the process using the port, or update `PORT` and the Vite proxy configuration together.
+
+### Frontend API errors
+
+Both terminals must be running. The frontend on port `5173` needs the backend on port `5000` for authentication, database-backed features, and Gemini chat.
+
+### Clean reinstall
+
+If dependencies are corrupted, stop the servers and run:
+
+Windows PowerShell:
+
+```powershell
+Remove-Item -Recurse -Force node_modules
+Remove-Item package-lock.json
+npm install
+```
+
+macOS/Linux:
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
 
 ---
 
